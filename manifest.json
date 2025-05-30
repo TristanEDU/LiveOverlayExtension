@@ -6,7 +6,13 @@
   "permissions": ["scripting", "activeTab", "tabs", "storage"],
   "host_permissions": ["<all_urls>"],
   "action": {
-    "default_title": "Toggle Overlay"
+    "default_title": "Toggle Overlay",
+    "default_icon": {
+      "16": "icon-on.png",
+      "32": "icon-on.png",
+      "48": "icon-on.png",
+      "128": "icon-on.png"
+    }
   },
   "background": {
     "service_worker": "background.js"

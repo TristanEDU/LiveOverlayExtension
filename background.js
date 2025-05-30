@@ -3,25 +3,29 @@ const tabOverlayStatus = {};
 chrome.action.onClicked.addListener(async (tab) => {
   const tabId = tab.id;
 
+  // First, always attempt to remove any existing overlay from this tab
+  chrome.scripting.executeScript({
+    target: { tabId },
+    func: () => {
+      const iframe = document.getElementById("overlay-iframe");
+      const controls = Array.from(document.querySelectorAll("div")).find(
+        (el) =>
+          el.textContent?.includes("Overlay Controls") &&
+          el.style?.position === "fixed"
+      );
+      if (iframe) iframe.remove();
+      if (controls) controls.remove();
+    },
+  });
+
+  // If the overlay was already active, we just removed it above
   if (tabOverlayStatus[tabId]) {
-    // Already injected → remove overlay
-    chrome.scripting.executeScript({
-      target: { tabId: tabId },
-      func: () => {
-        const iframe = document.getElementById("overlay-iframe");
-        const panel = document.querySelector(
-          'div[style*="Overlay Controls"]'
-        )?.parentElement;
-        if (iframe) iframe.remove();
-        if (panel) panel.remove();
-      },
-    });
     tabOverlayStatus[tabId] = false;
     chrome.action.setIcon({ tabId, path: "icon-off.png" }); // optional
   } else {
-    // Not injected → inject content.js
+    // If not active, inject the overlay
     chrome.scripting.executeScript({
-      target: { tabId: tabId },
+      target: { tabId },
       files: ["content.js"],
     });
     tabOverlayStatus[tabId] = true;
