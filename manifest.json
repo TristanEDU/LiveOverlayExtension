@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "Live Site Overlay Tool",
+  "version": "1.0",
+  "description": "Overlay one live site over another for pixel-perfect comparison.",
+  "permissions": ["scripting", "activeTab"],
+  "host_permissions": ["<all_urls>"],
+  "action": {
+    "default_title": "Overlay a site"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ]
+}
