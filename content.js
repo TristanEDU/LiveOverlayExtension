@@ -92,7 +92,7 @@ if (!document.getElementById("overlay-iframe")) {
   };
   scrollLabel.appendChild(scrollCheckbox);
 
-  // Overlay Unlock
+  // Overlay Unlock toggle
   const unlockButton = document.createElement("button");
   unlockButton.textContent = "🔓 Unlock Overlay";
   unlockButton.style.marginTop = "8px";
@@ -104,7 +104,7 @@ if (!document.getElementById("overlay-iframe")) {
   unlockButton.style.borderRadius = "4px";
   unlockButton.style.width = "100%";
   unlockButton.id = "unlock-overlay-button";
-  panel.appendChild(unlockButton);
+  controls.appendChild(unlockButton);
 
   // Assemble controls
   controls.appendChild(scrollLabel);
@@ -146,27 +146,25 @@ if (!document.getElementById("overlay-iframe")) {
   document.addEventListener("mouseup", () => {
     isDragging = false;
   });
+
+  // Unlock toggle logic
+  window.overlayUnlocked = false;
+
+  unlockButton.addEventListener("click", () => {
+    if (!iframe) return;
+
+    window.overlayUnlocked = !window.overlayUnlocked;
+
+    if (window.overlayUnlocked) {
+      iframe.style.pointerEvents = "auto";
+      document.body.style.pointerEvents = "none";
+      document.documentElement.style.pointerEvents = "none";
+      unlockButton.textContent = "🔒 Lock Overlay";
+    } else {
+      iframe.style.pointerEvents = "none";
+      document.body.style.pointerEvents = "auto";
+      document.documentElement.style.pointerEvents = "auto";
+      unlockButton.textContent = "🔓 Unlock Overlay";
+    }
+  });
 }
-
-let overlayUnlocked = false;
-
-unlockButton.addEventListener("click", () => {
-  const iframe = document.getElementById("overlay-iframe");
-  if (!iframe) return;
-
-  overlayUnlocked = !overlayUnlocked;
-
-  if (overlayUnlocked) {
-    // Unlock: enable interaction with overlay, disable site below
-    iframe.style.pointerEvents = "auto";
-    document.body.style.pointerEvents = "none";
-    document.documentElement.style.pointerEvents = "none";
-    unlockButton.textContent = "🔒 Lock Overlay";
-  } else {
-    // Lock again: disable interaction with overlay, re-enable site
-    iframe.style.pointerEvents = "none";
-    document.body.style.pointerEvents = "auto";
-    document.documentElement.style.pointerEvents = "auto";
-    unlockButton.textContent = "🔓 Unlock Overlay";
-  }
-});
