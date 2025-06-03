@@ -1,7 +1,6 @@
 console.log("LiveOverlayExtension: content script loaded");
 
 if (!document.getElementById("overlay-iframe")) {
-  // Create overlay iframe
   const iframe = document.createElement("iframe");
   iframe.src = "https://hiousastg.wpengine.com";
   iframe.id = "overlay-iframe";
@@ -18,12 +17,11 @@ if (!document.getElementById("overlay-iframe")) {
   iframe.style.overflow = "hidden";
   iframe.setAttribute("scrolling", "no");
 
-  // Create control panel
   const controls = document.createElement("div");
   controls.style.position = "fixed";
   controls.style.top = "10px";
   controls.style.right = "10px";
-  controls.style.zIndex = "10000";
+  controls.style.zIndex = "10001";
   controls.style.background = "rgba(255, 255, 255, 0.95)";
   controls.style.padding = "10px";
   controls.style.border = "1px solid #ccc";
@@ -31,8 +29,8 @@ if (!document.getElementById("overlay-iframe")) {
   controls.style.fontSize = "12px";
   controls.style.fontFamily = "sans-serif";
   controls.style.userSelect = "none";
+  controls.style.pointerEvents = "auto"; // always allow control panel to be clickable
 
-  // Create drag handle
   const dragHandle = document.createElement("div");
   dragHandle.textContent = "Overlay Controls";
   dragHandle.style.fontWeight = "bold";
@@ -41,7 +39,6 @@ if (!document.getElementById("overlay-iframe")) {
   dragHandle.style.userSelect = "none";
   controls.appendChild(dragHandle);
 
-  // Opacity slider
   const sliderLabel = document.createElement("label");
   sliderLabel.textContent = "Opacity: ";
   const slider = document.createElement("input");
@@ -54,7 +51,6 @@ if (!document.getElementById("overlay-iframe")) {
     iframe.style.opacity = e.target.value / 100;
   };
 
-  // URL input
   const urlLabel = document.createElement("label");
   urlLabel.textContent = "Overlay URL: ";
   urlLabel.style.display = "block";
@@ -67,7 +63,6 @@ if (!document.getElementById("overlay-iframe")) {
     iframe.src = urlInput.value;
   };
 
-  // Invert toggle
   const invertLabel = document.createElement("label");
   invertLabel.textContent = " Invert Colors";
   const invertCheckbox = document.createElement("input");
@@ -78,7 +73,6 @@ if (!document.getElementById("overlay-iframe")) {
   };
   invertLabel.appendChild(invertCheckbox);
 
-  // Scroll toggle
   const scrollLabel = document.createElement("label");
   scrollLabel.textContent = " Enable Scrolling";
   const scrollCheckbox = document.createElement("input");
@@ -92,7 +86,7 @@ if (!document.getElementById("overlay-iframe")) {
   };
   scrollLabel.appendChild(scrollCheckbox);
 
-  // Overlay Unlock toggle
+  // Overlay Unlock Toggle
   const unlockButton = document.createElement("button");
   unlockButton.textContent = "🔓 Unlock Overlay";
   unlockButton.style.marginTop = "8px";
@@ -106,7 +100,7 @@ if (!document.getElementById("overlay-iframe")) {
   unlockButton.id = "unlock-overlay-button";
   controls.appendChild(unlockButton);
 
-  // Assemble controls
+  // Add controls
   controls.appendChild(scrollLabel);
   controls.appendChild(document.createElement("br"));
   controls.appendChild(sliderLabel);
@@ -117,13 +111,11 @@ if (!document.getElementById("overlay-iframe")) {
   controls.appendChild(document.createElement("br"));
   controls.appendChild(invertLabel);
 
-  // Add to page
   document.body.appendChild(iframe);
   document.body.appendChild(controls);
-
   console.log("Overlay iframe and controls added");
 
-  // Drag logic (only from dragHandle)
+  // Drag logic
   let isDragging = false;
   let offsetX = 0;
   let offsetY = 0;
@@ -157,13 +149,23 @@ if (!document.getElementById("overlay-iframe")) {
 
     if (window.overlayUnlocked) {
       iframe.style.pointerEvents = "auto";
+      iframe.style.overflow = "auto";
+      iframe.setAttribute("scrolling", "yes");
+
       document.body.style.pointerEvents = "none";
       document.documentElement.style.pointerEvents = "none";
+      controls.style.pointerEvents = "auto";
+
       unlockButton.textContent = "🔒 Lock Overlay";
     } else {
       iframe.style.pointerEvents = "none";
+      iframe.style.overflow = "hidden";
+      iframe.setAttribute("scrolling", "no");
+
       document.body.style.pointerEvents = "auto";
       document.documentElement.style.pointerEvents = "auto";
+      controls.style.pointerEvents = "auto";
+
       unlockButton.textContent = "🔓 Unlock Overlay";
     }
   });
