@@ -92,6 +92,20 @@ if (!document.getElementById("overlay-iframe")) {
   };
   scrollLabel.appendChild(scrollCheckbox);
 
+  // Overlay Unlock
+  const unlockButton = document.createElement("button");
+  unlockButton.textContent = "🔓 Unlock Overlay";
+  unlockButton.style.marginTop = "8px";
+  unlockButton.style.padding = "6px";
+  unlockButton.style.cursor = "pointer";
+  unlockButton.style.background = "#444";
+  unlockButton.style.color = "white";
+  unlockButton.style.border = "1px solid #666";
+  unlockButton.style.borderRadius = "4px";
+  unlockButton.style.width = "100%";
+  unlockButton.id = "unlock-overlay-button";
+  panel.appendChild(unlockButton);
+
   // Assemble controls
   controls.appendChild(scrollLabel);
   controls.appendChild(document.createElement("br"));
@@ -133,3 +147,26 @@ if (!document.getElementById("overlay-iframe")) {
     isDragging = false;
   });
 }
+
+let overlayUnlocked = false;
+
+unlockButton.addEventListener("click", () => {
+  const iframe = document.getElementById("overlay-iframe");
+  if (!iframe) return;
+
+  overlayUnlocked = !overlayUnlocked;
+
+  if (overlayUnlocked) {
+    // Unlock: enable interaction with overlay, disable site below
+    iframe.style.pointerEvents = "auto";
+    document.body.style.pointerEvents = "none";
+    document.documentElement.style.pointerEvents = "none";
+    unlockButton.textContent = "🔒 Lock Overlay";
+  } else {
+    // Lock again: disable interaction with overlay, re-enable site
+    iframe.style.pointerEvents = "none";
+    document.body.style.pointerEvents = "auto";
+    document.documentElement.style.pointerEvents = "auto";
+    unlockButton.textContent = "🔓 Unlock Overlay";
+  }
+});
